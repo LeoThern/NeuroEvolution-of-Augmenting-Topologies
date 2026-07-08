@@ -1,6 +1,0 @@
-numpy
-networkx
-gymnasium
-jupyterlab
-
-# consider replacing with poetry or uv?
