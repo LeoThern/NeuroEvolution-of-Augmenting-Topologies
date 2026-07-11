@@ -32,9 +32,9 @@ Each network is encoded by a set of nodes and a set of edges:
 
 The original NEAT implementation used a modified (steepened) sigmoid activation function for all nodes: $y = \frac{1}{1+e^{-4.9x}}$.
 
-## Specification and Fitness Sharing
+## Speciation and Fitness Sharing
 
-The population of networks is clustered by their *Compatiblity Distance* into species (’centroid’ is picked as random representative from each species prev. generation, greedy assigned to first matching species), an individuals raw fitness is adjusted to a shared fitness by dividing by size (count) of their species.
+The population of networks is clustered by their *Compatiblity Distance* $\delta$ into species, an individuals raw fitness is adjusted to a shared fitness by dividing by size (count) of their species.
 
 $$
 \delta = \frac{c_1 E}{N}+\frac{c_2 D}{N}+c_3 \cdot \Delta \bar{W} \qquad f'_i = \frac{f_i}{\vert S\vert}
@@ -52,7 +52,10 @@ N = number of genes in larger genome
 
 c_{1,2,3} = hyperparameters
 
-To combat stagnation a drop-off age is implemented: if a species maximum fitness does not improve within X generations it is considered stagnant and their fitness is penalized (e.g. set to 0). The species containing the single best individual is typically immune from this.
+### Clustering
+
+For each cluster center we pick a random (or highest fitness) representative from each species prev. generation, then assign every individual greedily to the first species/cluster where *Compatiblity Distance* $\delta$ is smaller than a threshold.
+Instead of a fixed threshold you can also adjust it dynamically from target number of species.
 
 The number of offspring allocated to a species is proportional to the sum of their (shared) fitness.
 
@@ -61,6 +64,8 @@ The number of offspring allocated to a species is proportional to the sum of the
 The allocated offspring count is typically divided into 25% mutation without crossover (cloning and mutation from rank-based probabilistic selection) and 75% crossover/mating.
 
 A small probability (e.g. 0.1%) is also allocated to *interspecies mating* (selecting second parent from population excl. own species).
+
+To combat stagnation a drop-off age is implemented: if a species maximum fitness does not improve within X generations it is considered stagnant and their fitness is penalized (e.g. set to 0). The species containing the single best individual is typically immune from this.
 
 ### Initialization
 
@@ -96,4 +101,3 @@ Probabilities are hyperparameters.
     - for each new connection incremented *Innovation Number*
 
 If two identical mutations occur in the same generation by chance, NEAT assigns them the same innovation number.
-
